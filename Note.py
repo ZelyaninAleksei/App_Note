@@ -3,7 +3,7 @@ class Note:
     def __init__(self):
         self._title = input("Введите название (тему) заметки ")
         self._user_text = input("Введите текст заметки ")
-        self._date_create_note = datetime.now()
+        self._date_create_note = datetime.now().date()
     def get_title(self):
         return self._title
 

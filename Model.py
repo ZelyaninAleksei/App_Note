@@ -2,6 +2,7 @@ import json
 
 from Menu import Menu
 from Note import Note
+from  datetime import datetime
 
 
 class Model:
@@ -19,7 +20,7 @@ class Model:
                     len(list_all_notes) + 1: {
                         "Заголовок": note.get_title(),
                         "Текст заметки": note.get_user_text(),
-                        "Дата создания заметки": note.get_date_create_note().strftime("%H:%M %d.%m.%Y")
+                        "Дата создания заметки": note.get_date_create_note().strftime("%d.%m.%Y")
                     }
                 })
                 print("\033[1;32mЗаметка успешно добавлена\033[0m")
@@ -46,6 +47,8 @@ class Model:
             elif choice == 4:
                     self.save_notes(list_all_notes)
             elif choice == 5:
+                    self.search_for_notes_by_date(list_all_notes)
+            elif choice == 6:
                 print("Выход из программы")
                 break
             else:
@@ -69,3 +72,28 @@ class Model:
             data = json_file.read()
         list_all_notes = json.loads(data)
         return list_all_notes
+
+    def search_for_notes_by_date(self, list_all_notes):
+        required_date_str = input("Введите дату для поиска (в формате dd.mm.yyyy): ")
+
+        try:
+            required_date = datetime.strptime(required_date_str, "%d.%m.%Y").date()
+        except ValueError:
+            print("\033[91mОшибка в формате даты. Введите дату в формате dd.mm.yyyy.\033[0m")
+            return
+
+        found_notes = []
+
+        for key, value in list_all_notes.items():
+            note_date = datetime.strptime(value["Дата создания заметки"], "%d.%m.%Y").date()
+            if note_date == required_date:
+                found_notes.append((key, value))
+
+        if found_notes:
+            print(f"Найдены заметки, созданные {required_date_str}:")
+            for key, value in found_notes:
+                print(f"Заметка №{key}:")
+                for field, field_value in value.items():
+                    print(f"   {field}: {field_value}")
+        else:
+            print(f"\033[91mЗаметки, созданные {required_date_str}, не найдены.\033[0m")
